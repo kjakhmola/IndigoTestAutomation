@@ -6,9 +6,24 @@ export class seatSelectionPage{
         this.nextBtn = page.locator('//*[text()="Next"]');
     }
 
-    async selectSeat(){
+    async selectSeat(fareType){
         await this.availableSeat.scrollIntoViewIfNeeded();
-        this.availableSeat.click();
-        this.nextBtn.click();
+        switch(fareType){
+            case "saver":
+                this.nextBtn.click();
+                break;
+            
+            case "flexi":
+                this.availableSeat.click();
+                this.nextBtn.click();
+                break;
+                
+            case "indigoupfront":
+                this.availableSeat.click();
+                this.nextBtn.click();
+                break;
+
+        }
+        
     }
 }

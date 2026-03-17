@@ -7,6 +7,7 @@ export class passengerDetailPage {
         this.lastName = page.locator('//*[@placeholder="Last Name"]');
         this.primaryContact = page.locator('(//input[@name="primaryContact"])[2]');
         this.emailId = page.locator('(//input[@name="email"])[1]');
+        this.privacyPolicyCheckBox = page.locator('#privacyPolicy-label');
         this.whatsAppCheckbox = page.locator('//*[@id="whatsapp-label"]');
         this.nextBtn = page.locator('//*[text()="Next"]');
 
@@ -21,6 +22,7 @@ export class passengerDetailPage {
         await this.primaryContact.fill(contact);
         await this.emailId.click();
         await this.emailId.fill(email);
+        await this.privacyPolicyCheckBox.click();
         await this.whatsAppCheckbox.click();
         await this.nextBtn.click();
     }

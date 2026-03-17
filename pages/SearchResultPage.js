@@ -25,7 +25,7 @@ export class SearchResultpage {
                 await this.flexiFare.click();
                 break;
 
-            case "super6E":
+            case "indigoupfront":
                 await this.super6EFare.click();
                 break;
 

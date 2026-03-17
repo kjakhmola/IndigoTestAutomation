@@ -27,7 +27,7 @@ test('Guest Booking Flow', async ({ page }) => {
 
     await homepage.clickSearch();
 
-    await searchResultPage.selectEconomyFlight('saver');
+    await searchResultPage.selectEconomyFlight('flexi');
 
     await passengerDetails.enterPassengerDetails("Ankit", "Test", "9411598504", "ankit.x.jakhmola@goindigo.in");
 
