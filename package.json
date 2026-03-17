@@ -8,12 +8,24 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.58.2",
     "@types/node": "^25.0.9"
   },
   "dependencies": {
     "imap-simple": "^1.6.3",
     "mailparser": "^3.9.4",
     "prompt-sync": "^4.2.0"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qaankitjakhmola/IndigoTest.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/qaankitjakhmola/IndigoTest/issues"
+  },
+  "homepage": "https://github.com/qaankitjakhmola/IndigoTest#readme"
 }
