@@ -9,7 +9,8 @@ export class HomePage {
         this.toText = page.locator('//span[text()="To"]');
         this.destinationInput = page.locator('(//input[@placeholder="Start typing.."])[2]');
         this.destinationSuggestions = page.locator('(//div[@class="city-selection__list-item gap-6"])[1]');
-        this.dateField = page.locator('//span[text()="Departure"]');
+        this.departureDateField = page.locator('//span[text()="Departure"]');
+        this.returnDateField = page.locator('//*[text()="Return"]');
 
         this.monthYear = page.locator('(//*[@class="rdrMonthName"])[1]');
         //this.allDates = page.locator('(//div[@class="rdrDays"])[1]');
@@ -23,6 +24,9 @@ export class HomePage {
         this.passengerContinueBtn = page.locator('//button[text()="Continue"]');
         this.searchBtn = page.locator('//button[text()="Search"]');
 
+        this.roundTripRadioBtn = page.locator('//*[text()="Round Trip"]');
+
+
     }
 
 
@@ -30,7 +34,29 @@ export class HomePage {
         await this.page.goto('https://www.goindigo.in/');
     }
 
+
+    async selectTripDetails(tripType, departureTargetDate, departureTargetMonthYear,returnTargetDate, returnTargetMonthYear) {
+    if (type.toLowerCase() === "oneway") {
+        await this.selectSource(city);
+        await this.selectDestination(city);
+        await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
+        
+    } else if (type.toLowerCase() === "roundtrip") {
+        await this.roundTripRadioBtn.click();
+        
+        await this.selectSource(city);
+        await this.selectDestination(city);
+        await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
+        await selectReturnDate(returnTargetDate, returnTargetMonthYear);
+        
+
+    } else {
+        throw new Error("Invalid trip type. Use 'oneway' or 'roundtrip'");
+    }
+}
+
     async selectSource(city) {
+        
         await this.fromText.click();
         await this.sourceInput.fill(city);
         await this.sourcesSuggestions.click();
@@ -52,17 +78,17 @@ export class HomePage {
 
     
 
-    async selectDate(targetDate, targetMonthYear) {
-        await this.dateField.click();
+    async selectDepartureDate(departureTargetDate, departureTargetMonthYear) {
+        await this.departureDateField.click();
 
-        await this.selectMonth(targetMonthYear);
+        await this.selectMonth(departureTargetMonthYear);
         const count = await this.allDates.count();
 
         for (let i = 0; i < count; i++) {
             const date = this.allDates.nth(i);
             const text = await date.textContent();
 
-            if (text.trim() === targetDate) {
+            if (text.trim() === departureTargetDate) {
                 await date.click();
                 break;
             }
@@ -70,13 +96,44 @@ export class HomePage {
 
     }
 
-    async selectMonth(targetMonthYear) {
+    async selectDepartureMonth(departureTargetMonthYear) {
         const currentMonthYear = await this.monthYear.textContent();
         //march 2026
         // console.log(currentMonthYear, "This is value of website");
 
         // console.log(targetMonthYear, "This is value of test data");
-        if (currentMonthYear == targetMonthYear) {
+        if (currentMonthYear == departureTargetMonthYear) {
+            return;
+        }
+        await this.clickPseudoBefore(this.arrowBtn);
+        await this.selectMonth(departureTargetMonthYear);
+    }
+
+    async selectReturnDate(returnTargetDate, returnTargetMonthYear) {
+        await this.returnDateField.click();
+
+        await this.selectMonth(returnTargetMonthYear);
+        const count = await this.allDates.count();
+
+        for (let i = 0; i < count; i++) {
+            const date = this.allDates.nth(i);
+            const text = await date.textContent();
+
+            if (text.trim() === returnTargetDate) {
+                await date.click();
+                break;
+            }
+        }
+
+    }
+
+    async selectReturnMonth(returnTargetMonthYear) {
+        const currentMonthYear = await this.monthYear.textContent();
+        //march 2026
+        // console.log(currentMonthYear, "This is value of website");
+
+        // console.log(targetMonthYear, "This is value of test data");
+        if (currentMonthYear == returnTargetMonthYear) {
             return;
         }
         await this.clickPseudoBefore(this.arrowBtn);
