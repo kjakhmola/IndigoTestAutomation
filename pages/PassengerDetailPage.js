@@ -22,7 +22,6 @@ export class passengerDetailPage {
         await this.primaryContact.fill(contact);
         await this.emailId.click();
         await this.emailId.fill(email);
-        await this.privacyPolicyCheckBox.click();
         await this.whatsAppCheckbox.click();
         await this.nextBtn.click();
     }
