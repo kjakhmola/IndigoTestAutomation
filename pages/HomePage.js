@@ -25,7 +25,7 @@ export class HomePage {
         this.searchBtn = page.locator('//button[text()="Search"]');
 
         this.roundTripRadioBtn = page.locator('//*[text()="Round Trip"]');
-
+        
 
     }
 
@@ -53,7 +53,7 @@ export class HomePage {
     } else {
         throw new Error("Invalid trip type. Use 'oneway' or 'roundtrip'");
     }
-}
+    }
 
     async selectSource(city) {
         
