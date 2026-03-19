@@ -10,7 +10,7 @@ export class HomePage {
         this.destinationInput = page.locator('(//input[@placeholder="Start typing.."])[2]');
         this.destinationSuggestions = page.locator('(//div[@class="city-selection__list-item gap-6"])[1]');
         this.departureDateField = page.locator('//span[text()="Departure"]');
-        this.returnDateField = page.locator('//*[text()="Return"]');
+
 
         this.monthYear = page.locator('(//*[@class="rdrMonthName"])[1]');
         //this.allDates = page.locator('(//div[@class="rdrDays"])[1]');
@@ -25,7 +25,8 @@ export class HomePage {
         this.searchBtn = page.locator('//button[text()="Search"]');
 
         this.roundTripRadioBtn = page.locator('//*[text()="Round Trip"]');
-        
+        this.returnDateField = page.locator('//*[text()="Return"]');
+
 
     }
 
@@ -35,28 +36,38 @@ export class HomePage {
     }
 
 
-    async selectTripDetails(tripType, departureTargetDate, departureTargetMonthYear,returnTargetDate, returnTargetMonthYear) {
-    if (type.toLowerCase() === "oneway") {
-        await this.selectSource(city);
-        await this.selectDestination(city);
-        await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
-        
-    } else if (type.toLowerCase() === "roundtrip") {
-        await this.roundTripRadioBtn.click();
-        
-        await this.selectSource(city);
-        await this.selectDestination(city);
-        await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
-        await selectReturnDate(returnTargetDate, returnTargetMonthYear);
-        
+    async selectTripDetails(
+        tripType,
+        sourceCity,
+        destinationCity,
+        departureTargetDate,
+        departureTargetMonthYear,
+        returnTargetDate,
+        returnTargetMonthYear
+    ) {
 
-    } else {
-        throw new Error("Invalid trip type. Use 'oneway' or 'roundtrip'");
-    }
+        if (tripType.toLowerCase() === "oneway") {
+
+            await this.selectSource(sourceCity);
+            await this.selectDestination(destinationCity);
+            await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
+
+        } else if (tripType.toLowerCase() === "roundtrip") {
+
+            await this.roundTripRadioBtn.click();
+
+            await this.selectSource(sourceCity);
+            await this.selectDestination(destinationCity);
+            await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
+            await this.selectReturnDate(returnTargetDate, returnTargetMonthYear);
+
+        } else {
+            throw new Error("Invalid trip type. Use 'oneway' or 'roundtrip'");
+        }
     }
 
     async selectSource(city) {
-        
+
         await this.fromText.click();
         await this.sourceInput.fill(city);
         await this.sourcesSuggestions.click();
@@ -76,12 +87,12 @@ export class HomePage {
 
     }
 
-    
+
 
     async selectDepartureDate(departureTargetDate, departureTargetMonthYear) {
         await this.departureDateField.click();
 
-        await this.selectMonth(departureTargetMonthYear);
+        await this.selectDepartureMonth(departureTargetMonthYear);
         const count = await this.allDates.count();
 
         for (let i = 0; i < count; i++) {
@@ -106,25 +117,45 @@ export class HomePage {
             return;
         }
         await this.clickPseudoBefore(this.arrowBtn);
-        await this.selectMonth(departureTargetMonthYear);
+        await this.selectDepartureMonth(departureTargetMonthYear);
     }
 
+    // async selectReturnDate(returnTargetDate, returnTargetMonthYear) {
+    //     await this.returnDateField.click();
+
+    //     await this.selectReturnDate(returnTargetMonthYear);
+    //     const count = await this.allDates.count();
+
+    //     for (let i = 0; i < count; i++) {
+    //         const date = this.allDates.nth(i);
+    //         const text = await date.textContent();
+
+    //         if (text.trim() === returnTargetDate) {
+    //             await date.click();
+    //             break;
+    //         }
+    //     }
+
+    // }
+
+
     async selectReturnDate(returnTargetDate, returnTargetMonthYear) {
+
         await this.returnDateField.click();
 
-        await this.selectMonth(returnTargetMonthYear);
+        await this.selectReturnMonth(returnTargetMonthYear); // ✅ correct
+
         const count = await this.allDates.count();
 
         for (let i = 0; i < count; i++) {
-            const date = this.allDates.nth(i);
-            const text = await date.textContent();
 
-            if (text.trim() === returnTargetDate) {
-                await date.click();
+            const text = (await this.allDates.nth(i).textContent())?.trim();
+
+            if (text === returnTargetDate) {
+                await this.allDates.nth(i).click();
                 break;
             }
         }
-
     }
 
     async selectReturnMonth(returnTargetMonthYear) {
@@ -137,7 +168,7 @@ export class HomePage {
             return;
         }
         await this.clickPseudoBefore(this.arrowBtn);
-        await this.selectMonth(targetMonthYear);
+        await this.selectReturnMonth(returnTargetMonthYear);
     }
 
     async clickPseudoBefore(Locator) {
@@ -180,7 +211,7 @@ export class HomePage {
 
     async clickSearch() {
         await this.searchBtn.click();
-    }   
+    }
 
 
 }

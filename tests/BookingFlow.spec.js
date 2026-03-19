@@ -24,8 +24,8 @@ test('Guest Booking Flow', async ({ page }) => {
     //await homepage.selectDestination('hyderabad');   
 
     //await homepage.selectDate("25", "July 2026");
-    await homepage.selectTripDetails("roundtrip", "25", "July 2026", "29", "July 2026");
-
+    await homepage.selectTripDetails('roundtrip', 'pune', 'hyderabad', '25', 'July 2026', '29', 'July 2026');
+   
     await homepage.clickSearch();
 
     await searchResultPage.selectEconomyFlight('saver');
