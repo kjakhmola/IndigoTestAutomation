@@ -7,7 +7,7 @@ export class seatSelectionPage{
     }
 
     async selectSeat(fareType){
-        await this.availableSeat.scrollIntoViewIfNeeded();
+        //await this.availableSeat.scrollIntoViewIfNeeded();
         switch(fareType){
             case "saver":
                 this.nextBtn.click();
