@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+
 export class Addons {
     constructor(page) {
         this.page = page;
@@ -5,7 +7,11 @@ export class Addons {
         this.mealAddBtn = page.locator('(//div[@class="skyplus-button skyplus-meal-card__btn-add"])[1]');
         this.nxtBtn = page.locator('//button[text()="Next"]');
         this.skipPopUp = page.locator('//*[text()="Skip"]');
+        this.skipPopUp3 = page.locator("");
+        this.skipPopUp2 = page.locator('(//div[@class="skyplus-button "])[1]');//button[contains(@class,'skyplus-button--small')][normalize-space()='Skip']
         this.returnTab = page.locator('(//*[@role="tab"])[3]');
+        this.chooseNowBtn = page.getByRole("button", {name: 'Choose now'})
+        this.addReturnMealBtn = page.locator('(//button[@class="skyplus-button--outline skyplus-button--outline-primary skyplus-button--medium "])[1]');
 
     }
 
@@ -14,31 +20,21 @@ export class Addons {
         await this.mealsLink.click();
         await this.mealAddBtn.click();
         await this.nxtBtn.click();
-    }
 
-    async addMealReturnTab() {
+        if (await this.skipPopUp.isVisible()) {
 
-        await this.addMeal();        
-        //await this.skipPopUp.click();  
-        await this.handleSkipPopup();      
-        await this.nxtBtn.click();
+            await this.skipPopUp.click();
+            await this.nxtBtn.click();
+            await this.chooseNowBtn.click();            
+            await this.addReturnMealBtn.first().click();
+            await this.nxtBtn.click();
 
-        // Handle return journey (if UI switches)
-        await this.returnTab.click();
-        await this.addMeal();        
-
-    }
-    async handleSkipPopup() {
-        try {
-            // Wait for skip button (short timeout)
-            if (await this.skipBtn.isVisible({ timeout: 3000 })) {
-                await this.skipBtn.click();
-            }
-        } catch (e) {
-            // Popup didn't appear → ignore
-            console.log("Skip popup not shown");
         }
+
     }
 
 
 }
+
+
+
