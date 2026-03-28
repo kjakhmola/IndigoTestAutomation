@@ -6,10 +6,10 @@ export default defineConfig({
   timeout: 90_000,
   expect:{timeout:10_000},
   use: {
+    baseURL : "https://www.goindigo.in/",
     browserName: "chromium",
     channel: "chrome",
     headless: false,
-    baseURL: "https://www.goindigo.in/",
     ignoreHTTPSErrors: true,
     screenshot: "only-on-failure",
     video: "off",

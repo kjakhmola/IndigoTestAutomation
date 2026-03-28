@@ -1,50 +1,40 @@
+import { BasePage } from "./BasePage";
 
 
-export class HomePage {
+export class HomePage extends BasePage {
     constructor(page) {
-        this.page = page;
-        this.fromText = page.locator('//span[text()="From"]');
-        this.sourceInput = page.locator('(//input[@placeholder="Start typing.."])[1]');
-        this.sourcesSuggestions = page.locator('(//*[@class="city-selection__list-item gap-6"])[1]');
-        this.toText = page.locator('//span[text()="To"]');
-        this.destinationInput = page.locator('(//input[@placeholder="Start typing.."])[2]');
-        this.destinationSuggestions = page.locator('(//div[@class="city-selection__list-item gap-6"])[1]');
-        this.departureDateField = page.locator('//span[text()="Departure"]');
+        super(page);
+        this.fromText = '//span[text()="From"]';
+        this.sourceInput = '(//input[@placeholder="Start typing.."])[1]';
+        this.sourcesSuggestions = '(//*[@class="city-selection__list-item gap-6"])[1]';
+        this.toText = '//span[text()="To"]';
+        this.destinationInput ='(//input[@placeholder="Start typing.."])[2]';
+        this.destinationSuggestions ='(//div[@class="city-selection__list-item gap-6"])[1]';
+        this.departureDateField ='//span[text()="Departure"]';
 
 
         this.monthYear = page.locator('(//*[@class="rdrMonthName"])[1]');
-        //this.allDates = page.locator('(//div[@class="rdrDays"])[1]');
         this.allDates = page.locator("//button[contains(@class, 'rdrDay') and not(contains(@class, 'rdrDayPassive')) and not(contains(@class, 'rdrDayDisabled'))]//span[@class='date']");
-        //this.arrowBtn = page.locator('//button[@class="rdrNextPrevButton rdrNextButton"]//i');
         this.arrowBtn = page.locator('//button[contains(@class,"rdrNextButton")]').first();
-        //this.arrowBtn = page.locator('//*[contains(@class,"In6e2")]//*[contains(@class, "skyplus-calendar")]//*[contains(@class, "rdrNextButton")]//i');
+        this.passengerField = '//label[text()="Passengers"]/following-sibling::div';
+        this.increaseAdult ='//button[@aria-label="Increase Adult"]';
+        this.passengerContinueBtn ='//button[text()="Continue"]';
+        this.searchBtn = '//button[text()="Search"]';
 
-        this.passengerField = page.locator('//label[text()="Passengers"]/following-sibling::div');
-        this.increaseAdult = page.locator('//button[@aria-label="Increase Adult"]');
-        this.passengerContinueBtn = page.locator('//button[text()="Continue"]');
-        this.searchBtn = page.locator('//button[text()="Search"]');
-
-        this.roundTripRadioBtn = page.locator('//*[text()="Round Trip"]');
-        this.returnDateField = page.locator('//*[text()="Return"]');
+        this.roundTripRadioBtn = '//*[text()="Round Trip"]';
+        this.returnDateField = '//*[text()="Return"]';
 
 
     }
 
 
     async gotoHomePage() {
-        await this.page.goto('https://www.goindigo.in/');
+        await this.navigatetoHomePage();
     }
 
 
-    async selectTripDetails(
-        tripType,
-        sourceCity,
-        destinationCity,
-        departureTargetDate,
-        departureTargetMonthYear,
-        returnTargetDate,
-        returnTargetMonthYear
-    ) {
+    async selectTripDetails(tripType, sourceCity, destinationCity, departureTargetDate, departureTargetMonthYear, returnTargetDate, returnTargetMonthYear
+) {
 
         if (tripType.toLowerCase() === "oneway") {
 
@@ -54,7 +44,7 @@ export class HomePage {
 
         } else if (tripType.toLowerCase() === "roundtrip") {
 
-            await this.roundTripRadioBtn.click();
+            await this.click(this.roundTripRadioBtn);
 
             await this.selectSource(sourceCity);
             await this.selectDestination(destinationCity);
@@ -68,18 +58,18 @@ export class HomePage {
 
     async selectSource(city) {
 
-        await this.fromText.click();
-        await this.sourceInput.fill(city);
-        await this.sourcesSuggestions.click();
+        await this.click(this.fromText);
+        await this.fill(this.sourceInput, city);
+        await this.click(this.sourcesSuggestions);
 
 
     }
 
 
     async selectDestination(city) {
-        await this.toText.click();
-        await this.destinationInput.fill(city);
-        await this.destinationSuggestions.click();
+        await this.click(this.toText);
+        await this.fill(this.destinationInput, city);
+        await this.click(this.destinationSuggestions);
 
 
 
@@ -90,7 +80,7 @@ export class HomePage {
 
 
     async selectDepartureDate(departureTargetDate, departureTargetMonthYear) {
-        await this.departureDateField.click();
+        await this.click(this.departureDateField);
 
         await this.selectDepartureMonth(departureTargetMonthYear);
         const count = await this.allDates.count();
@@ -109,10 +99,7 @@ export class HomePage {
 
     async selectDepartureMonth(departureTargetMonthYear) {
         const currentMonthYear = await this.monthYear.textContent();
-        //march 2026
-        // console.log(currentMonthYear, "This is value of website");
-
-        // console.log(targetMonthYear, "This is value of test data");
+        
         if (currentMonthYear == departureTargetMonthYear) {
             return;
         }
@@ -120,28 +107,12 @@ export class HomePage {
         await this.selectDepartureMonth(departureTargetMonthYear);
     }
 
-    // async selectReturnDate(returnTargetDate, returnTargetMonthYear) {
-    //     await this.returnDateField.click();
 
-    //     await this.selectReturnDate(returnTargetMonthYear);
-    //     const count = await this.allDates.count();
-
-    //     for (let i = 0; i < count; i++) {
-    //         const date = this.allDates.nth(i);
-    //         const text = await date.textContent();
-
-    //         if (text.trim() === returnTargetDate) {
-    //             await date.click();
-    //             break;
-    //         }
-    //     }
-
-    // }
 
 
     async selectReturnDate(returnTargetDate, returnTargetMonthYear) {
 
-        await this.returnDateField.click();
+        await this.click(this.returnDateField);
 
         await this.selectReturnMonth(returnTargetMonthYear); // ✅ correct
 
@@ -160,10 +131,7 @@ export class HomePage {
 
     async selectReturnMonth(returnTargetMonthYear) {
         const currentMonthYear = await this.monthYear.textContent();
-        //march 2026
-        // console.log(currentMonthYear, "This is value of website");
-
-        // console.log(targetMonthYear, "This is value of test data");
+        
         if (currentMonthYear == returnTargetMonthYear) {
             return;
         }
@@ -210,7 +178,7 @@ export class HomePage {
 
 
     async clickSearch() {
-        await this.searchBtn.click();
+        await this.click(this.searchBtn);
     }
 
 

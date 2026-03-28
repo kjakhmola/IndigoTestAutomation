@@ -1,6 +1,10 @@
-export class passengerDetailPage {
+import { BasePage } from './BasePage.js';
+
+export class passengerDetailPage extends BasePage{
 
     constructor(page) {
+
+        super(page);
         this.page = page;
         this.gender = page.locator('//*[@value="Male"]');
         this.firstName = page.locator('//*[@placeholder="First and Middle Name"]');
