@@ -13,9 +13,9 @@ export class HomePage extends BasePage {
         this.departureDateField ='//span[text()="Departure"]';
 
 
-        this.monthYear = page.locator('(//*[@class="rdrMonthName"])[1]');
-        this.allDates = page.locator("//button[contains(@class, 'rdrDay') and not(contains(@class, 'rdrDayPassive')) and not(contains(@class, 'rdrDayDisabled'))]//span[@class='date']");
-        this.arrowBtn = page.locator('//button[contains(@class,"rdrNextButton")]').first();
+        this.monthYear = '(//*[@class="rdrMonthName"])[1]';
+        this.allDates = "//button[contains(@class, 'rdrDay') and not(contains(@class, 'rdrDayPassive')) and not(contains(@class, 'rdrDayDisabled'))]//span[@class='date']";
+        this.arrowBtn = '//button[contains(@class,"rdrNextButton")]';
         this.passengerField = '//label[text()="Passengers"]/following-sibling::div';
         this.increaseAdult ='//button[@aria-label="Increase Adult"]';
         this.passengerContinueBtn ='//button[text()="Continue"]';
@@ -71,10 +71,6 @@ export class HomePage extends BasePage {
         await this.fill(this.destinationInput, city);
         await this.click(this.destinationSuggestions);
 
-
-
-
-
     }
 
 
@@ -83,14 +79,14 @@ export class HomePage extends BasePage {
         await this.click(this.departureDateField);
 
         await this.selectDepartureMonth(departureTargetMonthYear);
-        const count = await this.allDates.count();
+        const count = await this.getCount(this.allDates);
 
         for (let i = 0; i < count; i++) {
-            const date = this.allDates.nth(i);
-            const text = await date.textContent();
+            //const date = this.allDates.nth(i);
+            const text = await this.getText(this.allDates,i);
 
             if (text.trim() === departureTargetDate) {
-                await date.click();
+                await this.click(this.allDates,i);
                 break;
             }
         }
@@ -98,7 +94,7 @@ export class HomePage extends BasePage {
     }
 
     async selectDepartureMonth(departureTargetMonthYear) {
-        const currentMonthYear = await this.monthYear.textContent();
+        const currentMonthYear = await this.getText(this.monthYear);
         
         if (currentMonthYear == departureTargetMonthYear) {
             return;
@@ -116,21 +112,21 @@ export class HomePage extends BasePage {
 
         await this.selectReturnMonth(returnTargetMonthYear); // ✅ correct
 
-        const count = await this.allDates.count();
+        const count = await this.getCount(this.allDates);
 
         for (let i = 0; i < count; i++) {
 
-            const text = (await this.allDates.nth(i).textContent())?.trim();
+            const text = await this.getText(this.allDates,i);
 
             if (text === returnTargetDate) {
-                await this.allDates.nth(i).click();
+                await this.click(this.allDates,i);
                 break;
             }
         }
     }
 
     async selectReturnMonth(returnTargetMonthYear) {
-        const currentMonthYear = await this.monthYear.textContent();
+        const currentMonthYear = await this.getText(this.monthYear);
         
         if (currentMonthYear == returnTargetMonthYear) {
             return;
@@ -139,39 +135,7 @@ export class HomePage extends BasePage {
         await this.selectReturnMonth(returnTargetMonthYear);
     }
 
-    async clickPseudoBefore(Locator) {
-        const locator = Locator;
-        await locator.evaluate((el) => {
-            const rect = el.getBoundingClientRect();
-            const before = window.getComputedStyle(el, '::before');
-
-            const toPx = (v) => {
-                if (!v) return 0;
-                const n = parseFloat(v);
-                return Number.isFinite(n) ? n : 0;
-            };
-
-            const left = toPx(before.left);
-            const top = toPx(before.top);
-
-            const x = rect.left + window.scrollX + left;
-            const y = rect.top + window.scrollY + top;
-
-            if (!Number.isFinite(x) || !Number.isFinite(y)) {
-                throw new Error(`Non-finite coords for ::before. left=${before.left}, top=${before.top}`);
-            }
-
-            const evt = new MouseEvent('click', {
-                bubbles: true,
-                cancelable: true,
-                view: window,
-                clientX: x,
-                clientY: y
-            });
-
-            el.dispatchEvent(evt);
-        });
-    }
+    
 
 
 

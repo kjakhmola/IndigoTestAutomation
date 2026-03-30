@@ -1,30 +1,30 @@
-export class seatSelectionPage {
+import { log } from "node:console";
+import { BasePage } from "./BasePage";
+
+
+export class seatSelectionPage extends BasePage {
 
     constructor(page) {
+        super(page);
         this.page = page;
-        //this.availableSeat = page.locator('[data-availability="true"]').first();
-        this.availableSeat = page.getByRole('gridcell', { name: /available/i }).first();
-        this.nextBtn = page.getByText('Next');
-        this.roundTripToggle = page.locator('.destination-toggle--2');
-        this.returnTab = page.locator('(//button[contains(@class,"skyplus-button")])[2]');
+        this.availableSeat = '//button[@class="seatmap-seat  " or @class="seatmap-seat free "]';
+        this.nextBtn = '//button[text()="Next"]';
+        this.flights = '//*[contains(@class,"destination-segment")]';
+        
     }
 
     async selectSeat() {
 
-        
-        await this.availableSeat.scrollIntoViewIfNeeded();
-        //await this.availableSeat.waitFor({ state: 'visible' });
-        await this.availableSeat.click();
-        await this.nextBtn.click();
+        //seat selection in departure leg
+        await this.click(this.availableSeat,0);
 
-        
-        if (await this.roundTripToggle.isVisible()) {
-
-            //await this.returnTab.click();
-
-            await this.availableSeat.waitFor({ state: 'visible' });
-            await this.availableSeat.click();
-            await this.nextBtn.click();
+        //seat selection in return leg
+        const flight = await this.getCount(this.flights);
+        for (let i = 0; i <= flight; i++) {
+            await this.click(this.availableSeat, 0);
         }
+
+        await this.click(this.nextBtn);
     }
+
 }
