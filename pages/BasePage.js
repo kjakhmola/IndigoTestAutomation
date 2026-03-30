@@ -21,7 +21,7 @@ export class BasePage {
     }
 
     async isVisible(locator) {
-        return await this.page.locator.isVisible();
+        return await this.page.locator(locator).isVisible();
     }
 
     async waitForPageLoad() {
@@ -32,8 +32,8 @@ export class BasePage {
         await this.page.waitForSelector(selector);
     }
 
-    async clickByText(text) {
-        await this.page.getByText(text).click();
+    async scrollIntoViewIfNeeded(locator) {
+        await this.page.locator(locator).scrollIntoViewIfNeeded();
     }
 
     async getCount(Locator){

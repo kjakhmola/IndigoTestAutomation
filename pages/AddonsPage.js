@@ -1,33 +1,32 @@
+import { BasePage } from "./BasePage";
 import { expect } from "@playwright/test";
 
-export class Addons {
+export class Addons extends BasePage {
     constructor(page) {
+        super(page);
         this.page = page;
-        this.mealsLink = page.locator('//div[text()="Meals"]');
-        this.mealAddBtn = page.locator('(//div[@class="skyplus-button skyplus-meal-card__btn-add"])[1]');
-        this.nxtBtn = page.locator('//button[text()="Next"]');
-        this.skipPopUp = page.locator('//*[text()="Skip"]');
-        this.skipPopUp3 = page.locator("");
-        this.skipPopUp2 = page.locator('(//div[@class="skyplus-button "])[1]');//button[contains(@class,'skyplus-button--small')][normalize-space()='Skip']
-        this.returnTab = page.locator('(//*[@role="tab"])[3]');
-        this.chooseNowBtn = page.getByRole("button", {name: 'Choose now'})
-        this.addReturnMealBtn = page.locator('(//button[@class="skyplus-button--outline skyplus-button--outline-primary skyplus-button--medium "])[1]');
+        this.mealsLink = '//div[text()="Meals"]';
+        this.mealAddBtn = '(//div[@class="skyplus-button skyplus-meal-card__btn-add"])[1]';
+        this.nxtBtn = '//button[text()="Next"]';
+        this.skipPopUp = '//*[text()="Skip"]';
+        this.returnTab = '(//*[@role="tab"])[3]';
+        this.chooseNowBtn = '//button[text()="Choose Now"]';
+        this.addReturnMealBtn = '(//button[@class="skyplus-button--outline skyplus-button--outline-primary skyplus-button--medium "])[1]';
 
     }
 
     async addMeal() {
 
-        await this.mealsLink.click();
-        await this.mealAddBtn.click();
-        await this.nxtBtn.click();
+        await this.click(this.mealsLink);
+        await this.click(this.mealAddBtn);
+        await this.click(this.nxtBtn);
 
         if (await this.skipPopUp.isVisible()) {
-
             await this.skipPopUp.click();
-            await this.nxtBtn.click();
-            await this.chooseNowBtn.click();            
-            await this.addReturnMealBtn.first().click();
-            await this.nxtBtn.click();
+            await this.click(this.nxtBtn);
+            await this.click(this.chooseNowBtn);            
+            await this.click(this.addReturnMealBtn, 0);
+            await this.click(this.nxtBtn);
 
         }
 

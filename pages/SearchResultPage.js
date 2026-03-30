@@ -1,17 +1,17 @@
-export class SearchResultpage {
+import { BasePage } from "./BasePage";
+
+export class SearchResultpage extends BasePage {
 
     constructor(page) {
+        super(page);
         this.page = page;
 
-        this.economyList = page.locator('//*[@class="skyplus-text selected-fare__fare-price sh3"]');
-
-        this.saverFare = page.locator('//*[text()="Saver fare"]');
-        this.flexiFare = page.locator('//*[text()="Flexi plus fare"]');
-        this.super6EFare = page.locator('//*[text()="IndiGo UpFront"]');
-
-        this.returnLegTab = page.locator('(//*[@class="flight-journey-tab-container__leg"])[2]');
-
-        this.nextButton = page.locator('//button[text()="Next"]');
+        this.economyList = '//*[@class="skyplus-text selected-fare__fare-price sh3"]';
+        this.saverFare = '//*[text()="Saver fare"]';
+        this.flexiFare = '//*[text()="Flexi plus fare"]';
+        this.super6EFare = '//*[text()="IndiGo UpFront"]';
+        this.returnLegTab = '(//*[@class="flight-journey-tab-container__leg"])[2]';
+        this.nextButton = '//button[text()="Next"]';
     }
 
     async selectFare(fareType) {
@@ -19,15 +19,15 @@ export class SearchResultpage {
         switch (fareType.toLowerCase()) {
 
             case "saver":
-                await this.saverFare.click();
+                await this.click(this.saverFare);
                 break;
 
             case "flexi":
-                await this.flexiFare.click();
+                await this.click(this.flexiFare);
                 break;
 
             case "indigoupfront":
-                await this.super6EFare.click();
+                await this.click(this.super6EFare);
                 break;
 
             default:
@@ -38,19 +38,28 @@ export class SearchResultpage {
     async selectEconomyFlight(tripType, fareType) {
 
         // 🔹 Departure Flight
-        await this.economyList.first().click();
+        const flightOptionsCount = await this.getCount(this.economyList);
+        for (let i = 0; i < flightOptionsCount; i++) {
+            await this.click(this.flightOptionsCount, i);
+        }
         await this.selectFare(fareType);
-        await this.nextButton.click();
+        await this.click(this.nextButton);
 
-        // 🔹 If roundtrip → handle return
+        //Return Flight
         if (tripType.toLowerCase() === "roundtrip") {
 
-            await this.returnLegTab.waitFor({ state: 'visible' });
-            await this.returnLegTab.click();
+            //await this.page.locator(this.returnLegTab).waitFor({ state: 'visible' });
 
-            await this.economyList.first().click();
+            await this.click(this.returnLegTab);
+
+            const returnFlights = await this.getCount(this.economyList);
+
+            for (let i = 0; i < returnFlights; i++) {
+                await this.click(this.economyList, i);
+                break;
+            }
             await this.selectFare(fareType);
-            await this.nextButton.click();
+            await this.click(this.nextButton);
         }
     }
 }
