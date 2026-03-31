@@ -44,7 +44,7 @@ export default defineConfig({
   //   ["html", { open: "never", outputFolder: "playwright-report" }],
   //   ["junit", { outputFile: "reports/junit/results.xml" }],
   //   ["json", { outputFile: "reports/json/results.json" }],
-  //   // ⬇️ Allure reporter
+  //   // Allure reporter
   //   ["allure-playwright", { resultsDir: "allure-results" }],
   // ],
  
