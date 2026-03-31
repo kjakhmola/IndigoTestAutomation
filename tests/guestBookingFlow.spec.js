@@ -19,15 +19,16 @@ test('Guest Booking Flow', async ({ page }) => {
 
     await homepage.gotoHomePage();
 
-    await homepage.selectSource('Pune');
+    //await homepage.selectSource('Pune');
 
-    await homepage.selectDestination('hyderabad');   
+    //await homepage.selectDestination('hyderabad');   
 
-    await homepage.selectDate("25", "July 2026");
-
+    //await homepage.selectDate("25", "July 2026");
+    await homepage.selectTripDetails('roundtrip', 'pune', 'hyderabad', '25', 'July 2026', '29', 'July 2026');
+   
     await homepage.clickSearch();
 
-    await searchResultPage.selectEconomyFlight('saver');
+    await searchResultPage.selectEconomyFlight('roundtrip', 'flexi');
 
     await passengerDetails.enterPassengerDetails("Ankit", "Test", "9411598504", "ankit.x.jakhmola@goindigo.in");
 

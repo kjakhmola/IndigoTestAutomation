@@ -1,129 +1,147 @@
+import { BasePage } from "./BasePage";
 
 
-export class HomePage {
+export class HomePage extends BasePage {
     constructor(page) {
-        this.page = page;
-        this.fromText = page.locator('//span[text()="From"]');
-        this.sourceInput = page.locator('(//input[@placeholder="Start typing.."])[1]');
-        this.sourcesSuggestions = page.locator('(//*[@class="city-selection__list-item gap-6"])[1]');
-        this.toText = page.locator('//span[text()="To"]');
-        this.destinationInput = page.locator('(//input[@placeholder="Start typing.."])[2]');
-        this.destinationSuggestions = page.locator('(//div[@class="city-selection__list-item gap-6"])[1]');
-        this.dateField = page.locator('//span[text()="Departure"]');
+        super(page);
+        this.fromTextLocator = '//*[contains(@aria-label,"sourceCity")]//div//span';
+        this.sourceInput = '(//input[@placeholder="Start typing.."])[1]';
+        this.sourcesSuggestions = '(//*[@class="city-selection__list-item gap-6"])[1]';
+        this.toText = '//span[text()="To"]';
+        this.destinationInput = '(//input[@placeholder="Start typing.."])[2]';
+        this.destinationSuggestions = '(//div[@class="city-selection__list-item gap-6"])[1]';
+        this.departureDateField = '//span[text()="Departure"]';
+        this.monthYear = '(//*[@class="rdrMonthName"])[1]';
+        this.allDates = "//button[contains(@class, 'rdrDay') and not(contains(@class, 'rdrDayPassive')) and not(contains(@class, 'rdrDayDisabled'))]//span[@class='date']";
+        this.arrowBtn = '//button[contains(@class,"rdrNextButton")]';
+        this.passengerField = '//label[text()="Passengers"]/following-sibling::div';
+        this.increaseAdult = '//button[@aria-label="Increase Adult"]';
+        this.passengerContinueBtn = '//button[text()="Continue"]';
+        this.searchBtn = '//button[text()="Search"]';
+        this.roundTripRadioBtn = '//*[text()="Round Trip"]';
+        this.returnDateField = '//*[text()="Return"]';
+        this.flightTabBookingWidget = '[class = "bookingmf-container__tabs--item active"]';
 
-        this.monthYear = page.locator('(//*[@class="rdrMonthName"])[1]');
-        //this.allDates = page.locator('(//div[@class="rdrDays"])[1]');
-        this.allDates = page.locator("//button[contains(@class, 'rdrDay') and not(contains(@class, 'rdrDayPassive')) and not(contains(@class, 'rdrDayDisabled'))]//span[@class='date']");
-        //this.arrowBtn = page.locator('//button[@class="rdrNextPrevButton rdrNextButton"]//i');
-        this.arrowBtn = page.locator('//button[contains(@class,"rdrNextButton")]').first();
-        //this.arrowBtn = page.locator('//*[contains(@class,"In6e2")]//*[contains(@class, "skyplus-calendar")]//*[contains(@class, "rdrNextButton")]//i');
-
-        this.passengerField = page.locator('//label[text()="Passengers"]/following-sibling::div');
-        this.increaseAdult = page.locator('//button[@aria-label="Increase Adult"]');
-        this.passengerContinueBtn = page.locator('//button[text()="Continue"]');
-        this.searchBtn = page.locator('//button[text()="Search"]');
 
     }
 
 
     async gotoHomePage() {
-        await this.page.goto('https://www.goindigo.in/');
+        await this.navigatetoHomePage();
+    }
+
+
+    async selectTripDetails(tripType, sourceCity, destinationCity, departureTargetDate, departureTargetMonthYear, returnTargetDate, returnTargetMonthYear
+    ) {
+
+        if (tripType.toLowerCase() === "oneway") {
+
+            await this.selectSource(sourceCity);
+            await this.selectDestination(destinationCity);
+            await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
+
+        } else if (tripType.toLowerCase() === "roundtrip") {
+
+            await this.click(this.roundTripRadioBtn);
+
+            await this.selectSource(sourceCity);
+            await this.selectDestination(destinationCity);
+            await this.selectDepartureDate(departureTargetDate, departureTargetMonthYear);
+            await this.selectReturnDate(returnTargetDate, returnTargetMonthYear);
+
+        } else {
+            throw new Error("Invalid trip type. Use 'oneway' or 'roundtrip'");
+        }
     }
 
     async selectSource(city) {
-        await this.fromText.click();
-        await this.sourceInput.fill(city);
-        await this.sourcesSuggestions.click();
+
+        await this.click(this.fromTextLocator);
+        await this.fill(this.sourceInput, city);
+        await this.click(this.sourcesSuggestions);
 
 
     }
-
 
     async selectDestination(city) {
-        await this.toText.click();
-        await this.destinationInput.fill(city);
-        await this.destinationSuggestions.click();
-
-
-
-
+        await this.click(this.toText);
+        await this.fill(this.destinationInput, city);
+        await this.click(this.destinationSuggestions);
 
     }
 
-    
+    async selectDepartureDate(departureTargetDate, departureTargetMonthYear) {
+        await this.click(this.departureDateField);
 
-    async selectDate(targetDate, targetMonthYear) {
-        await this.dateField.click();
-
-        await this.selectMonth(targetMonthYear);
-        const count = await this.allDates.count();
+        await this.selectDepartureMonth(departureTargetMonthYear);
+        const count = await this.getCount(this.allDates);
 
         for (let i = 0; i < count; i++) {
-            const date = this.allDates.nth(i);
-            const text = await date.textContent();
+            //const date = this.allDates.nth(i);
+            const text = await this.getText(this.allDates, i);
 
-            if (text.trim() === targetDate) {
-                await date.click();
+            if (text.trim() === departureTargetDate) {
+                await this.click(this.allDates, i);
                 break;
             }
         }
 
     }
 
-    async selectMonth(targetMonthYear) {
-        const currentMonthYear = await this.monthYear.textContent();
-        //march 2026
-        // console.log(currentMonthYear, "This is value of website");
+    async selectDepartureMonth(departureTargetMonthYear) {
+        const currentMonthYear = await this.getText(this.monthYear);
 
-        // console.log(targetMonthYear, "This is value of test data");
-        if (currentMonthYear == targetMonthYear) {
+        if (currentMonthYear == departureTargetMonthYear) {
             return;
         }
         await this.clickPseudoBefore(this.arrowBtn);
-        await this.selectMonth(targetMonthYear);
+        await this.selectDepartureMonth(departureTargetMonthYear);
     }
 
-    async clickPseudoBefore(Locator) {
-        const locator = Locator;
-        await locator.evaluate((el) => {
-            const rect = el.getBoundingClientRect();
-            const before = window.getComputedStyle(el, '::before');
 
-            const toPx = (v) => {
-                if (!v) return 0;
-                const n = parseFloat(v);
-                return Number.isFinite(n) ? n : 0;
-            };
+    async selectReturnDate(returnTargetDate, returnTargetMonthYear) {
 
-            const left = toPx(before.left);
-            const top = toPx(before.top);
+        await this.click(this.returnDateField);
 
-            const x = rect.left + window.scrollX + left;
-            const y = rect.top + window.scrollY + top;
+        await this.selectReturnMonth(returnTargetMonthYear); // ✅ correct
 
-            if (!Number.isFinite(x) || !Number.isFinite(y)) {
-                throw new Error(`Non-finite coords for ::before. left=${before.left}, top=${before.top}`);
+        const count = await this.getCount(this.allDates);
+
+        for (let i = 0; i < count; i++) {
+
+            const text = await this.getText(this.allDates, i);
+
+            if (text === returnTargetDate) {
+                await this.click(this.allDates, i);
+                break;
             }
-
-            const evt = new MouseEvent('click', {
-                bubbles: true,
-                cancelable: true,
-                view: window,
-                clientX: x,
-                clientY: y
-            });
-
-            el.dispatchEvent(evt);
-        });
+        }
     }
 
+    async selectReturnMonth(returnTargetMonthYear) {
+        const currentMonthYear = await this.getText(this.monthYear);
 
+        if (currentMonthYear == returnTargetMonthYear) {
+            return;
+        }
+        await this.clickPseudoBefore(this.arrowBtn);
+        await this.selectReturnMonth(returnTargetMonthYear);
+    }
 
 
 
     async clickSearch() {
-        await this.searchBtn.click();
-    }   
+        await this.click(this.searchBtn);
+    }
+
+
+    async bookingWidgetFightText() {
+        return await this.getText(this.flightTabBookingWidget);
+    }
+
+    async fromText(){
+        return await this.getText(this.fromTextLocator);
+    }
 
 
 }
