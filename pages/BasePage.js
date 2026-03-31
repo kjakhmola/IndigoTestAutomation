@@ -3,7 +3,7 @@ export class BasePage {
         this.page = page;
     }
 
-     async navigatetoHomePage() {
+    async navigatetoHomePage() {
         await this.page.goto("/");
     }
 
@@ -12,11 +12,12 @@ export class BasePage {
         await this.page.locator(locator).nth(nth).click();
     }
 
+ 
     async fill(locator, value) {
         await this.page.locator(locator).fill(value);
     }
 
-    async getText(locator, nth=0) {
+    async getText(locator, nth = 0) {
         return await this.page.locator(locator).nth(nth).textContent();
     }
 
@@ -36,11 +37,11 @@ export class BasePage {
         await this.page.locator(locator).scrollIntoViewIfNeeded();
     }
 
-    async getCount(Locator){
+    async getCount(Locator) {
         return await this.page.locator(Locator).count();
     }
 
-    async clickPseudoBefore(Locator,nth=0) {
+    async clickPseudoBefore(Locator, nth = 0) {
         const locator = await this.page.locator(Locator).nth(nth);
         await locator.evaluate((el) => {
             const rect = el.getBoundingClientRect();

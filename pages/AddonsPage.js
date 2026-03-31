@@ -10,7 +10,7 @@ export class Addons extends BasePage {
         this.nxtBtn = '//button[text()="Next"]';
         this.skipPopUp = '//*[text()="Skip"]';
         this.returnTab = '(//*[@role="tab"])[3]';
-        this.chooseNowBtn = '//button[text()="Choose Now"]';
+        this.chooseNowBtn = '//button[text()="Choose now"]';
         this.addReturnMealBtn = '(//button[@class="skyplus-button--outline skyplus-button--outline-primary skyplus-button--medium "])[1]';
 
     }
@@ -21,11 +21,11 @@ export class Addons extends BasePage {
         await this.click(this.mealAddBtn);
         await this.click(this.nxtBtn);
 
-        if (await this.skipPopUp.isVisible()) {
-            await this.skipPopUp.click();
+        if (await this.isVisible(this.skipPopUp)) {
+            await this.click(this.skipPopUp);
             await this.click(this.nxtBtn);
-            await this.click(this.chooseNowBtn);            
-            await this.click(this.addReturnMealBtn, 0);
+            await this.click(this.chooseNowBtn);
+            await this.click(this.addReturnMealBtn);
             await this.click(this.nxtBtn);
 
         }

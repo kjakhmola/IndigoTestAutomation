@@ -37,18 +37,18 @@ export class SearchResultpage extends BasePage {
 
     async selectEconomyFlight(tripType, fareType) {
 
-        // 🔹 Departure Flight
-        const flightOptionsCount = await this.getCount(this.economyList);
-        for (let i = 0; i < flightOptionsCount; i++) {
-            await this.click(this.flightOptionsCount, i);
-        }
+        // Departure Flight
+        //const flightOptionsCount = await this.getCount(this.economyList);
+        //for (let i = 0; i < flightOptionsCount; i++) {
+            await this.click(this.economyList);
+        //}
         await this.selectFare(fareType);
         await this.click(this.nextButton);
 
-        //Return Flight
+        // Return Flight
         if (tripType.toLowerCase() === "roundtrip") {
 
-            //await this.page.locator(this.returnLegTab).waitFor({ state: 'visible' });
+            await this.page.locator(this.returnLegTab).waitFor({ state: 'visible' });
 
             await this.click(this.returnLegTab);
 
